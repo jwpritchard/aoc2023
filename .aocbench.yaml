@@ -1,0 +1,32 @@
+---
+# .aocbench.yaml version (always 1)
+version: 1
+# Repo Author
+author: Extapathy
+# Language used
+language: Rust
+# Path to Dockerfile to build image
+dockerfile: .docker/Dockerfile
+# Or image (this takes priority)
+# image: rust:alpine
+# Disable Hyperfine usage
+# hyperfine: False
+# Location where code directory should be mounted
+code: /code
+# [*] What directory to run code from
+workdir: /code
+# [*] When running image, command to run a given day.
+cmd: "./target/release/day%zeroday% %input%"
+# [*] When running image, command to run once to build a given day if needed.
+runonce: "cargo build --release --bin day%zeroday%"
+# [*] Directories that need persisting across runs
+persistence:
+  - /usr/local/cargo/registry
+# [*] Environment vars to set on container
+environment: []
+# [*] Path to per-day code.
+daypath: "src/bin/day%zeroday%.rs"
+# [*] Path to per-day input file.
+inputfile: "input/day%zeroday%.txt"
+# [*] Path to per-day answer file.
+answerfile: "results/day%zeroday%.txt"
