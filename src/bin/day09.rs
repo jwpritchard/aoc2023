@@ -1,9 +1,8 @@
 #![feature(portable_simd)]
 
-use std::env;
-use std::fs::File;
 use std::io::Read;
 use std::simd::{i32x32, mask32x32};
+use aoc2023::common::file::MmapFile;
 
 #[inline]
 fn get_value(init: &[i32; 32], count: usize) -> (i32, i32) {
@@ -30,23 +29,36 @@ fn get_value(init: &[i32; 32], count: usize) -> (i32, i32) {
 }
 
 fn main() {
-    let mut file = File::open(env::args().nth(1).unwrap()).unwrap();
-    let mut s = String::new();
-    file.read_to_string(&mut s).unwrap();
+    let file = MmapFile::from_args();
 
     let mut arr: [i32; 32] = [0; 32];
-
-    let lines = s.lines();
     let (mut prev, mut next): (i32, i32) = (0, 0);
-    for line in lines {
-        let mut i = 0;
-        for x in line.split_ascii_whitespace().map(|s| s.parse::<i32>().unwrap()){
-            arr[i] = x;
-            i = i + 1;
+    let mut i = 0;
+    let mut number: i32 = 0;
+    let mut negative = false;
+
+    for b in file.bytes() {
+        let byte = b.unwrap();
+
+        if byte.is_ascii_digit() {
+            number = 10 * number + (byte & 0x0F) as i32;
         }
-        let (l, r) = get_value(&arr, i);
-        prev += l;
-        next += r;
+        else if byte == b'-' {
+            negative = true;
+        }
+        else {
+            arr[i] = if negative { -number } else { number };
+            number = 0;
+            negative = false;
+            i = i + 1;
+
+            if byte == b'\n' {
+                let (l, r) = get_value(&arr, i);
+                i = 0;
+                prev += l;
+                next += r;
+            }
+        }
     }
 
     println!("{}\n{}", next, prev);
