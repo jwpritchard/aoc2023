@@ -22,7 +22,7 @@ fn get_value(init: &[i32; 32], count: usize) -> (i32, i32) {
             break;
         }
 
-        reverse= if x & 1 == 0 { reverse + diffs } else { reverse - diffs };
+        reverse = if x & 1 == 0 { reverse + diffs } else { reverse - diffs };
         forward = forward.rotate_elements_left::<1>() + diffs;
         x = x + 1;
     }
@@ -49,7 +49,7 @@ fn main() {
         next += r;
     }
 
-    println!("{}\n{}", prev, next);
+    println!("{}\n{}", next, prev);
 }
 
 #[cfg(test)]
