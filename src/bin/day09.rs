@@ -1,20 +1,20 @@
 #![feature(portable_simd)]
 
 use std::io::Read;
-use std::simd::{i32x32, mask32x32};
+use std::simd::{i64x32, mask64x32};
 use aoc2023::common::file::MmapFile;
 
 #[inline]
-fn get_value(init: &[i32; 32], count: usize) -> (i32, i32) {
-    const ZERO: i32x32 = i32x32::from_array([0; 32]);
+fn get_value(init: &[i64; 32], count: usize) -> (i64, i64) {
+    const ZERO: i64x32 = i64x32::from_array([0; 32]);
 
-    let mut diffs = i32x32::from_slice(init);
+    let mut diffs = i64x32::from_slice(init);
     let mut reverse = diffs;
     let mut forward = diffs;
 
     let mut x = 1;
     loop {
-        let mask = mask32x32::from_bitmask(u64::MAX << (count - x));
+        let mask = mask64x32::from_bitmask(u64::MAX << (count - x));
         diffs = mask.select(ZERO, diffs.rotate_elements_left::<1>() - diffs);
 
         if diffs == ZERO {
@@ -31,17 +31,17 @@ fn get_value(init: &[i32; 32], count: usize) -> (i32, i32) {
 fn main() {
     let file = MmapFile::from_args();
 
-    let mut arr: [i32; 32] = [0; 32];
-    let (mut prev, mut next): (i32, i32) = (0, 0);
+    let mut arr: [i64; 32] = [0; 32];
+    let (mut prev, mut next): (i64, i64) = (0, 0);
     let mut i = 0;
-    let mut number: i32 = 0;
+    let mut number: i64 = 0;
     let mut negative = false;
 
     for b in file.bytes() {
         let byte = b.unwrap();
 
         if byte.is_ascii_digit() {
-            number = 10 * number + (byte & 0x0F) as i32;
+            number = 10 * number + (byte & 0x0F) as i64;
         }
         else if byte == b'-' {
             negative = true;
