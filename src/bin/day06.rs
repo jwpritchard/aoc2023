@@ -2,7 +2,7 @@ extern crate core;
 
 use std::fs::File;
 use std::io::{BufRead, BufReader};
-use std::iter;
+use std::{env, iter};
 
 #[inline(always)]
 pub fn calculate_wins((time, distance) : (isize, isize)) -> isize {
@@ -22,7 +22,7 @@ pub fn get_value(line: &str) -> isize {
 }
 
 fn main() {
-    let mut file = BufReader::new(File::open("input/day06.txt").unwrap());
+    let mut file = BufReader::new(File::open(env::args().nth(1).unwrap()).unwrap());
 
     let mut lines = file.lines();
     let mut time_line = lines.next().unwrap().unwrap();
