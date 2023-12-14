@@ -3,8 +3,6 @@
 use std::io::Read;
 use std::simd::{mask32x32, u32x32};
 use std::simd::cmp::SimdPartialEq;
-use bitvec::order::Lsb0;
-use bitvec::prelude::AsBits;
 use aoc2023::common::file::MmapFile;
 
 fn get_match_position(values: &[u32], window_size: usize, exact: bool) -> isize {
@@ -21,7 +19,7 @@ fn get_match_position(values: &[u32], window_size: usize, exact: bool) -> isize 
         if exact && !v.simd_eq(w).to_bitmask() & mask == 0 {
             return i as isize;
         }
-        else if !exact && mask32x32::from_bitmask(mask).select(v ^ w, ZERO).as_bits::<Lsb0>().count_ones() == 2 {
+        else if !exact && mask32x32::from_bitmask(mask).select(v ^ w, ZERO).as_array().iter().map(|s| s.count_ones()).sum::<u32>() == 2 {
             return i as isize;
         }
     }
@@ -37,7 +35,7 @@ fn get_match_value(rows: &[u32], row_count: usize, cols: &[u32], col_count: usiz
 }
 
 fn main() {
-    let file = MmapFile::from_args();
+    let file = MmapFile::from_input("day13.txt");
     let mut rows = [0; 32];
     let mut columns = [0; 32];
     let mut x = 0;
