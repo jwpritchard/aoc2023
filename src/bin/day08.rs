@@ -1,8 +1,8 @@
+use std::env;
 use std::fs::File;
 use std::io::Read;
 use nohash_hasher::IntMap;
 use num_integer::Integer;
-use aoc2023::common::file::MmapFile;
 
 fn path_length(directions: &str, start_node: u64, end: impl Fn(u64) -> bool, nodes: &IntMap<u64, (u64, u64)>) -> u64 {
     let mut dir = directions.chars().cycle();
@@ -29,7 +29,7 @@ fn parse_line(line: &str) -> (u64, (u64, u64)) {
 }
 
 fn main() {
-    let mut file = MmapFile::from_args();
+    let mut file = File::open(env::args().nth(1).unwrap()).unwrap();
     let mut s = String::new();
     file.read_to_string(&mut s).unwrap();
 
